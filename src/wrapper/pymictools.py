@@ -1,0 +1,39 @@
+"""
+This module serves as an interface to simplify the use of mictools.so.
+"""
+import mictools
+
+
+# Computes the given mictools command using mictools.so,
+# then parses the resulting list into a more convenient
+# list of lists structure following the next format:
+#
+# [[result1], [result2], ... ,[resultN]]
+#
+# where every [result] follows is defined as follows:
+#
+# result [var1, var2, pearson, parallelmic, samic]
+def Run(command):
+    results = []
+    try:
+        argv = command.split()
+        argc = len(argv)
+
+        raw_results = mictools.Run(argc, argv)
+        raw_results.reverse()
+
+        while raw_results:
+            result = []  # single result placeholder
+
+            result.append(raw_results.pop())  # var 1
+            result.append(raw_results.pop())  # var 2
+            result.append(raw_results.pop())  # pearson
+            result.append(raw_results.pop())  # parallelmic
+            result.append(raw_results.pop())  # samic
+
+            results.append(result)  # append result to results list
+
+    except :
+        print "Invalid command or error in mictools execution!"
+
+    return results
