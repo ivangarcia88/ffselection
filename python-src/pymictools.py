@@ -6,7 +6,6 @@ sys.path.append('/mic/')
 sys.path.append('../mic/')
 import mictools
 
-
 # Computes the given mictools command using mictools.so,
 # then parses the resulting list into a more convenient
 # list of lists structure following the next format:
