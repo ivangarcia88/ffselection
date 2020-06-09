@@ -2,7 +2,6 @@
 This module serves as an interface to simplify the use of mictools.so.
 """
 import sys
-sys.path.append('/mic/')
 sys.path.append('../mic/')
 import mictools
 

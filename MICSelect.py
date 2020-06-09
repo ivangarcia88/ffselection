@@ -1,69 +1,76 @@
 import sys
-sys.path.insert(0,'python-src/')
+sys.path.insert(0,'python-src')
 sys.path.insert(0,'mic/')
-import featureSelectors as fs
-import learningParallelized as lp
-import parser as parser
-
-optionMap = {'-i': 0,'-y': 1,'-w': 2,'-z': 3,'-a': 4,'-h': 5,'-t': 6,'-u': 7,'-p': 8,'-n': 9,'-c': 10,'-m': 11,'-j': 12,'-k': 13,'-e': 14,'-x': 15, '-s': 16, '-r': 17}
-
-def run(argv):
-	
-	if(len(argv)<2):
-		parser.help()
-		return 1 # no parameters recived
-
-	#default values
-	cutMethod = 2
-	cutAmmount = 0
-	removeRedundantFlag=0
-	writeCorrelationResults=0
-	useCorrelationFile=0
-	correlationAlgorithms=[1,1,0] #Pearson, ApproxMaxMI, No SMIC
-
-	result = parser.run(argv)
-	#print result	
-	if(result[0]!=False): #If there is no error in parser 
-		
-		optionListSorted, paramListSorted, MICStringParameters, correlationAlgorithms = result
-		#Mandatory Parameters
-		datasetPath = paramListSorted[optionMap['-i']]
-		targetName = paramListSorted[optionMap['-y']]
-		
-		# Select Cut Type
-		if(optionListSorted[optionMap['-s']]): #static method
-			cutMethod = 0
-			cutAmmount = int(paramListSorted[optionMap['-s']])
-		else: #dynamic method
-			if(optionListSorted[optionMap['-x']]):
-				cutMethod = int(paramListSorted[optionMap['-x']])
-				cutAmmount = 0
-
-		
-		#Check for feature selector flags
-		if(optionListSorted[optionMap['-r']]): #remove redundant flag
-			removeRedundantFlag=1
-		else:
-			removeRedundantFlag=0
-		if(optionListSorted[optionMap['-w']]): #write correlation results
-			writeCorrelationResults=1
-		else:
-			writeCorrelationResults=0
-		if(optionListSorted[optionMap['-z']]): #use previous correlation results
-			writeCorrelationResults=0 #z prevents to rewrite the file
-			useCorrelationFile=1
-		else:
-			useCorrelationFile=0
-	
-		relevantFeatures = fs.selectingRelevantFeatures(datasetPath, targetName, cutMethod, cutAmmount, MICStringParameters, correlationAlgorithms, removeRedundantFlag, writeCorrelationResults, useCorrelationFile, 0)
-		if(relevantFeatures!=False):
-			print (len(relevantFeatures[0]))
-			print (relevantFeatures[0])
-		else:
-			return 3 #error in feature selection
-	else:
-		print (result)
-		return 2 #error in parser
+import numpy as np
+import pandas as pd
+import time
+import pymictools
+import futil
+import parser
+import fs
 
 if __name__ == "__main__":
-	run(sys.argv)
+    args = parser.run()
+    if(args): #if there are arguments
+        [micArgs,fsArgs,fullArgs] = args
+        #if dataset if column feature
+        futil.createFolder("tmp")
+        filename = futil.getFileName(fullArgs["filepath"])    
+        if(fullArgs["dataset_orientation"]==0):
+            micInputPath = "tmp/"+filename
+            mlInputPath = fullArgs["filepath"]
+            futil.transposeDataset(fullArgs["filepath"],micInputPath)
+            micArgs = micArgs.replace(fullArgs["filepath"],micInputPath)
+        else: #dataset if row feature
+            micInputPath = fullArgs["filepath"]
+            mlInputPath = "tmp/"+filename
+            
+        #Exectute ranking features
+        initTime = time.time()
+        MICCommand = "mictools"+micArgs
+        print(MICCommand)
+        result = pymictools.Run(MICCommand) #matrix measure as list of list
+        if(len(result) <= 5):
+            print("Error, tool cannot work with too few samples")
+            futil.finish()
+        featureSelected = fs.featureRanking(result)
+        totalFeatures = len(featureSelected)
+        
+        #Getting parameters
+        s = fullArgs["static_cut"]
+        r = fullArgs["remove_redundant"]
+        x = fullArgs["forward_selection"]
+        
+        #Static feature selection cut
+        if(s!=None):
+            featureSelected = featureSelected[0:s,:]
+        #Forward Stepwise feature selection cut
+        if(x!=None):
+            featureSelected = fs.forwardSelection(featureSelected,mlInputPath,x)
+        #Removing redundant features    
+        if(r!=None):
+            fstring = ""
+            for row in featureSelected:
+                fstring += row[1]+"\n"
+            keysPath = "tmp/keys.txt"
+            futil.createFolder("tmp")
+            futil.createFile(keysPath,fstring[:-1])
+            MICCommand = "mictools"+ " -i " +micInputPath + " -f " + keysPath + " -R"
+            print(MICCommand)
+            result = pymictools.Run(MICCommand)
+            featureSelected = fs.removeRedundant(featureSelected,result)
+
+        #Displaying results
+        print("====================================================")
+        print("Total number of features",totalFeatures)
+        print("Number of features selected",len(featureSelected))
+        endTime = time.time()
+        print("Feature selection time", round(endTime-initTime,4))
+        print("Writing output dataset")
+        fs.selectFeatures(featureSelected, mlInputPath,"datasets-output/"+filename)
+        #Writting correlation if required
+        if(fullArgs["write_correlation"]):
+            print("Writting correlation results")
+            df = pd.DataFrame(featureSelected)
+            df.to_csv("correlation-output/"+filename, header=["feature 1", "feature 2", "score"], index=False)
+        print("====================================================")
