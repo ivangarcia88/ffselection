@@ -46,8 +46,8 @@ def resultParser(args):
 			"fastMIC":"R", "SMIC":"S", "clumps":"u","minpearson":"p", "maxpearson":"e", 
 			"neigh":"n", "cooling_factor":"c", "minTempo":"m", "minPM":"j", "maxPM":"k", 
 			"dataset_orientation":"b", "write_correlation":"w", "use_results":"z"}
-	fsoptions = ["remove_redundant","forward_selection","static_cut"]
-	fsArgs = {"remove_redundant":None,"forward_selection":None,"static_cut":None}
+	fsoptions = ["remove_redundant","forward_selection","static_cut", "write_correlation"]
+	fsArgs = {"remove_redundant":None,"forward_selection":None,"static_cut":None, "write_correlation":None}
 	micArgs = ""
 	for key in args:
 		value = args[key]

@@ -13,17 +13,18 @@ if __name__ == "__main__":
     args = parser.run()
     if(args): #if there are arguments
         [micArgs,fsArgs,fullArgs] = args
-        #if dataset if column feature
+        
         futil.createFolder("tmp")
         filename = futil.getFileName(fullArgs["filepath"])    
-        if(fullArgs["dataset_orientation"]==0):
+        if(fullArgs["dataset_orientation"]==0): #dataset column feature
             micInputPath = "tmp/"+filename
             mlInputPath = fullArgs["filepath"]
             futil.transposeDataset(fullArgs["filepath"],micInputPath)
             micArgs = micArgs.replace(fullArgs["filepath"],micInputPath)
-        else: #dataset if row feature
+        else: #dataset row feature
             micInputPath = fullArgs["filepath"]
             mlInputPath = "tmp/"+filename
+            futil.transposeDataset(fullArgs["filepath"],mlInputPath)
             
         #Exectute ranking features
         initTime = time.time()
@@ -35,6 +36,11 @@ if __name__ == "__main__":
             futil.finish()
         featureSelected = fs.featureRanking(result)
         totalFeatures = len(featureSelected)
+        
+        #Writting correlation if required
+        if(fullArgs["write_correlation"]):
+            df = pd.DataFrame(featureSelected)
+            df.to_csv("correlation-output/"+filename, header=["feature 1", "feature 2", "score"], index=False)
         
         #Getting parameters
         s = fullArgs["static_cut"]
@@ -48,19 +54,21 @@ if __name__ == "__main__":
         if(x!=None):
             featureSelected = fs.forwardSelection(featureSelected,mlInputPath,x)
         #Removing redundant features    
-        if(r!=None):
+        if(r):
+            print("Removing redundant features")
             fstring = ""
             for row in featureSelected:
                 fstring += row[1]+"\n"
             keysPath = "tmp/keys.txt"
             futil.createFolder("tmp")
             futil.createFile(keysPath,fstring[:-1])
-            MICCommand = "mictools"+ " -i " +micInputPath + " -f " + keysPath + " -R"
+            MICCommand = "mictools"+ " -i " +micInputPath + " -f " + keysPath + " -R" " -t " +str(fullArgs["threads"]) 
             print(MICCommand)
             result = pymictools.Run(MICCommand)
             featureSelected = fs.removeRedundant(featureSelected,result)
 
         #Displaying results
+        #print(featureSelected)
         print("====================================================")
         print("Total number of features",totalFeatures)
         print("Number of features selected",len(featureSelected))
@@ -68,9 +76,4 @@ if __name__ == "__main__":
         print("Feature selection time", round(endTime-initTime,4))
         print("Writing output dataset")
         fs.selectFeatures(featureSelected, mlInputPath,"datasets-output/"+filename)
-        #Writting correlation if required
-        if(fullArgs["write_correlation"]):
-            print("Writting correlation results")
-            df = pd.DataFrame(featureSelected)
-            df.to_csv("correlation-output/"+filename, header=["feature 1", "feature 2", "score"], index=False)
         print("====================================================")

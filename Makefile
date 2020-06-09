@@ -17,4 +17,4 @@ wrapper:
 	rm -rf src/build
 
 clean:
-	rm -rf correlation-output datasets-output mic debug mictools tmp
+	rm -rf correlation-output datasets-output mic debug mictools tmp datasets-test results

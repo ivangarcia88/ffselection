@@ -82,6 +82,7 @@ def selectFeatures(featureSelected, datasetPath, outputPath=False):
         if(i==0):
             fsl.append(row[0])
         fsl.append(row[1])
+    print(datasetPath)
     df = pd.read_csv(datasetPath)
     df = df[fsl]
     if(outputPath):
