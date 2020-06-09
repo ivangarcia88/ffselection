@@ -33,6 +33,7 @@ def help():
     print("    -m min tempo (float 0-1)")
     print("    -j min PM (float 0-1)")
     print("    -k max PM float(0-1)")
+    print(" ")
     print("Extra options: ")
     print("    -b dataset orientation (integer 0-1, default = 0, column by feature)")
     print("    -w write correlation results")
