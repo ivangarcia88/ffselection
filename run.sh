@@ -5,14 +5,14 @@ rm -rf datasets-test;
 mkdir datasets-test;
 mkdir datasets-test/fss;
 mkdir datasets-test/fsx;
-
+wget https://u.pcloud.link/publink/show?code=XZT2pOkZgHaO7WBaWzVmGRmMdkdjLY39hK2V
 # Iterate the string array using for loop
 for val in {1..12}
 do
    #echo $pref$val".csv"
    echo Running $pref$val".csv";
    #Running feature selection, with static cut 10
-   python MICSelect.py -i datasets-input/$pref$val".csv" -y target -s 5 -t 16 -P -R;
+   python MICSelect.py -i datasets-input/$pref$val".csv" -y target -s 10 -t 16 -P -R;
    cp datasets-output/$pref$val".csv" datasets-test/fss/$pref$val".csv";
    #Running feature selection, with step wise 
    python MICSelect.py -i datasets-input/$pref$val".csv" -y target -x 20 -t 16 -P -R;

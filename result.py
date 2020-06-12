@@ -80,7 +80,7 @@ def individualRaScore(testName, datasetName):
     f.set_size_inches(30, 10.5, forward=True)
     plt.suptitle("ROC curve comparison "+datasetName)
     fullAuc = raScore(datasetInfo1,ax[0],"Full features set "+datasetName) # full
-    fsAuc = raScore(datasetInfo2,ax[1],"Top 5 features "+datasetName) # fs
+    fsAuc = raScore(datasetInfo2,ax[1],"Top 10 features "+datasetName) # fs
     fs2Auc = raScore(datasetInfo3,ax[2],"Stepwise feature selection set "+datasetName) # fs2
     #plt.show()
     plt.savefig("results/"+testName+"/"+testName+"-"+datasetName+".png")
@@ -93,7 +93,7 @@ def groupedRaScore(testName, datasetName, ax):
     datasetInfo2 = "datasets-test/fss/"+datasetName
     datasetInfo3 = "datasets-test/fsx/"+datasetName
     fullAuc = raScore(datasetInfo1,ax[0],"Full features set "+datasetName) # full
-    fsAuc = raScore(datasetInfo2,ax[1],"Top 5 features "+datasetName) # fs
+    fsAuc = raScore(datasetInfo2,ax[1],"Top 10 features "+datasetName) # fs
     fs2Auc = raScore(datasetInfo3,ax[2],"Stepwise feature selection set "+datasetName) # fs2
     return [round(fullAuc,2), round(fsAuc,2), round(fs2Auc,2)]
     
@@ -129,7 +129,7 @@ def processResults(datasets, pGrouped=True):
 
 if __name__ == "__main__":
 
-    testName = "top5-20"
+    testName = "top10-20"
     datasets = ["ds1.csv", "ds2.csv", "ds3.csv", "ds4.csv", "ds5.csv", "ds6.csv", 
                 "ds7.csv", "ds8.csv", "ds9.csv", "ds10.csv", "ds11.csv", "ds12.csv", ]
 
