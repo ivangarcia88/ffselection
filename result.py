@@ -1,7 +1,8 @@
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_classification
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import plot_roc_curve
@@ -11,6 +12,8 @@ import pandas as pd
 import numpy as np
 import os 
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 
 #Process ROC AUC Score with KFold
 def raScore(datasetPath, ax, axTitle):
@@ -19,16 +22,14 @@ def raScore(datasetPath, ax, axTitle):
     data = df.values
     X = data[:,1:]
     y = data[:,0]
-
     cv = StratifiedKFold(n_splits=3)
-    svc = SVC(random_state=42)
-    rfc = RandomForestClassifier(random_state=42)
+    gnb = GaussianNB()
+    lr = LogisticRegression(random_state=0, multi_class='auto')
     knn = KNeighborsClassifier(n_neighbors=3)
-
-    #fig, ax = plt.subplots()
-    classifiers = [svc,rfc,knn]
-    names = ["SVC","RFC","KNN"]
-    colors = ["red","blue","green"]
+    svc = SVC(random_state=42)
+    classifiers = [gnb,lr,knn,svc]
+    names = ["GNB","LR","KNN","SVC"]
+    colors = ["red","blue","green","brown"]
     lmean_tpr = []
     lmean_auc = []
     mean_fpr = np.linspace(0, 1, 100)
@@ -104,7 +105,7 @@ def processResults(datasets, pGrouped=True):
     fsAucList = []
     fs2AucList = []
     i = 0
-    size = 6
+    size = 4
     for datasetName in datasets:
         print(datasetName)
         if(pGrouped): #Plot grouped
@@ -116,7 +117,7 @@ def processResults(datasets, pGrouped=True):
             if(i%size==(size-1)): #Save figure
                 plt.savefig("results/"+testName+"/"+"full"+str(i+1)+".png")
                 #plt.savefig("results/"+testName+"/"+"full"+str(i+1)+".svg")
-                #plt.savefig("results/"+testName+"/"+"full"+str(i+1)+".pdf")
+                plt.savefig("results/"+testName+"/"+"full"+str(i+1)+".pdf")
         else: #Plot individual
             [fullAuc, fsAuc, fs2Auc] = individualRaScore(testName, datasetName)
         #Apend results
@@ -131,7 +132,8 @@ if __name__ == "__main__":
 
     testName = "top10-20"
     datasets = ["ds1.csv", "ds2.csv", "ds3.csv", "ds4.csv", "ds5.csv", "ds6.csv", 
-                "ds7.csv", "ds8.csv", "ds9.csv", "ds10.csv", "ds11.csv", "ds12.csv", ]
+                "ds7.csv", "ds8.csv", "ds9.csv", "ds10.csv", "ds11.csv", "ds12.csv"]#, 
+                #"ds13.csv", "ds14.csv", "ds15.csv"]
 
     #Create result folder
     if(not os.path.exists("results")):

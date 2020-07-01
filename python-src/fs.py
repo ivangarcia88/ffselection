@@ -7,11 +7,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_classification
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
+import warnings
+warnings.filterwarnings("ignore")
 
 ############################### AUXILIAR FUNCTIONS ###############################
 def sortMatrix(matrix,index):
@@ -34,11 +37,12 @@ def indexValue(matrixMeasures): #Get column measure to be used (to identify whic
 #Secuential ML classifier
 def classifyData(X,y):
     cv = StratifiedKFold(n_splits=3)
-    svc = SVC(random_state=42)
-    rfc = RandomForestClassifier(random_state=42)
+    gnb = GaussianNB()
+    lr = LogisticRegression(random_state=0, multi_class='auto')
     knn = KNeighborsClassifier(n_neighbors=3)
-    classifiers = [svc,rfc,knn]
-    names = ["SVC","RFC","KNN"]
+    svc = SVC(random_state=42)
+    classifiers = [gnb,lr,knn,svc]
+    names = ["GNB","LR","KNN","SVC"]
     scores = []
     for classifier in classifiers:
         for i, (train, test) in enumerate(cv.split(X, y)):
@@ -50,12 +54,13 @@ def classifyData(X,y):
 #Paralell ML classifier
 def parallelMLClassifier(X,y):
     cv = StratifiedKFold(n_splits=3)
-    svc = SVC(random_state=42)
-    rfc = RandomForestClassifier(random_state=42)
+    gnb = GaussianNB()
+    lr = LogisticRegression(random_state=0, multi_class='auto')
     knn = KNeighborsClassifier(n_neighbors=3)
-    classifiers = [svc,rfc,knn]
-    names = ["SVC","RFC","KNN"]
-    colors = ["red","blue","green"]
+    svc = SVC(random_state=42)
+    classifiers = [gnb,lr,knn,svc]
+    names = ["GNB","LR","KNN","SVC"]
+    colors = ["red","blue","green","brown"]
     scores = []
     pool = Pool(9)
     parameters = []
