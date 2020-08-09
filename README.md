@@ -53,7 +53,3 @@ Experiments were executed on ubuntu 18.04 using python 3.6
 8. Run MICSelect with every dataset inside ("datasets-input") with the parameters (-y target -x 20)
 9. Move every output ("datasets-output") to folder "datasets-test/x20"
 10. Runs result.py
-
-Alternative to reproduce the results after compiling mictools, download the datasets from: 
-https://u.pcloud.link/publink/show?code=XZT2pOkZgHaO7WBaWzVmGRmMdkdjLY39hK2Vrun 
-Unzip the datasets, then run the script "run.sh" (tested on linux ubuntu 18.04 with python 3.6)
