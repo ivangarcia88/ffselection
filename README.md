@@ -2,7 +2,8 @@
 
 Datasets with high dimensionality represent a challenge to existing learning methods. The presence of irrelevant and redundant features in a dataset can degrade the performance of the models inferred from it. In large datasets, manual management of features tends to be impractical. This frameworks allows to remove redundant and irrelevant features in supervised datasets.
 
-![N|Solid](https://github.com/ivangarcia88/ffselection/blob/assets/0.png)
+<img src="https://github.com/ivangarcia88/ffselection/blob/assets/0.png" width="500">
+
 
 # Compilation
 
@@ -31,12 +32,12 @@ $ make wrapper
 # MICTools
 MICTools allows to identify correlation between variables in a dataset. It can be used independently and compiled as a standalone application. 
 
-![N|Solid](https://github.com/ivangarcia88/ffselection/blob/assets/1.png)
+<img src="https://github.com/ivangarcia88/ffselection/blob/assets/1.png">
 
 # MICSelect
 MICSelect perform the feature selection, it requires MICTools. 
 
-![N|Solid](https://github.com/ivangarcia88/ffselection/blob/assets/2.png)
+<img src="https://github.com/ivangarcia88/ffselection/blob/assets/2.png">
 
 # How to reproduce the results in the paper
 
