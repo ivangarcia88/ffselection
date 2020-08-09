@@ -1,8 +1,10 @@
 # Fast supervised feature selection framework
 
-Datasets with high dimensionality represent a challenge to existing learning methods. The presence of irrelevant and redundant features in a dataset can degrade the performance of the models inferred from it. In large datasets, manual management of features tends to be impractical. This frameworks allows to remove redundant and irrelevant features in supervised datasets. 
+Datasets with high dimensionality represent a challenge to existing learning methods. The presence of irrelevant and redundant features in a dataset can degrade the performance of the models inferred from it. In large datasets, manual management of features tends to be impractical. This frameworks allows to remove redundant and irrelevant features in supervised datasets.
 
-# Installation
+[![N|Solid](https://github.com/ivangarcia88/ffselection/blob/assets/0.png)]
+
+# Compilation
 
 To install requirements and compile in a debian based platform execute the script "setup.sh" 
 
@@ -25,6 +27,17 @@ Then execute in the terminal:
 $ make
 $ make wrapper
 ```
+
+# MICTools
+MICTools allows to identify correlation between variables in a dataset. It can be used independently and compiled as a standalone application. 
+
+[![N|Solid](https://github.com/ivangarcia88/ffselection/blob/assets/1.png)]
+
+# MICSelect
+MICSelect perform the feature selection, it requires MICTools. 
+
+[![N|Solid](https://github.com/ivangarcia88/ffselection/blob/assets/2.png)]
+
 # How to reproduce the results in the paper
 
 Experiments were executed on ubuntu 18.04 using python 3.6
@@ -39,7 +52,6 @@ Experiments were executed on ubuntu 18.04 using python 3.6
 8. Run MICSelect with every dataset inside ("datasets-input") with the parameters (-y target -x 20)
 9. Move every output ("datasets-output") to folder "datasets-test/x20"
 10. Runs result.py
-
 
 Alternative to reproduce the results after compiling mictools, download the datasets from: 
 https://u.pcloud.link/publink/show?code=XZT2pOkZgHaO7WBaWzVmGRmMdkdjLY39hK2Vrun 
